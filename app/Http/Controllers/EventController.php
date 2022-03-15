@@ -45,6 +45,7 @@ class EventController extends Controller
      */
     public function store(StoreEventRequest $request)
     {
+        // 入力した予約時間が既に登録されているか確認
         $check = EventService::checkEventDuplication(
             $request['event_date'],
             $request['start_time'],
@@ -58,7 +59,7 @@ class EventController extends Controller
 
         // dd($request);
 
-        // DB格納前にフォーマット形成（イベント日付と開始時間の連結後、時間格納用にフォーマット形成）
+        // DB格納前にフォーマット形成（イベント日付と開始時間の連結後、格納用にフォーマット形成）
         $startDate = EventService::joinDateAndTime(
             $request['event_date'],
             $request['start_time'],
