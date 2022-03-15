@@ -124,7 +124,7 @@
   "Use an authentication code": "認証コードを使用する",
   "We were unable to find a registered user with this email address.": "このメールアドレスで登録しているユーザーが見つかりませんでした。",
   "When two factor authentication is enabled, you will be prompted for a secure, random token during authentication. You may retrieve this token from your phone's Google Authenticator application.": "二要素認証を有効にすると、認証時に安全なランダムなトークンの入力を求められます。このトークンは、お使いの携帯電話の Google Authenticator アプリケーションから取得することができます。",
-  "Whoops! Something went wrong.": "Whoops! Something went wrong.",
+  "Whoops! Something went wrong.": "問題が発生しました。",
   "You have enabled two factor authentication.": "二要素認証が有効になっています。",
   "You have not enabled two factor authentication.": "二要素認証が有効になっていません。",
   "You may delete any of your existing tokens if they are no longer needed.": "不要になった場合は、既存のトークンを削除することができます。",
