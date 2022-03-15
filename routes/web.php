@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LivewireTestController;
 use App\Http\Controllers\AlpineTestController;
+use App\Http\Controllers\EventController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -23,15 +24,12 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 })->name('dashboard');
 
 // manager権限のルート設定
-
 // perfixで以下のように設定するとURLが「http://127.0.0.1:8000/manager/index」のような構成になる
 Route::prefix('manager')
 // AuthServiceProvider.phpで設定した権限チェック
 ->middleware('can:manager-higher')
 ->group(function(){
-    Route::get('index',function(){
-        dd('manager');
-    });
+    Route::resource('events', EventController::class);
 });
 
 // user権限のルート設定
