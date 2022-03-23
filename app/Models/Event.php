@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Carbon\Carbon;
+use App\Models\User;
 
 class Event extends Model
 {
@@ -19,6 +20,16 @@ class Event extends Model
         'end_date',
         'is_visible',
     ];
+
+    // Userテーブルとのリレーション
+    protected function users() 
+    {
+        // belongsToMany(リレーション対象のモデルクラス,中間テーブル名)
+        return $this->belongsToMany(User::class,'reservations')
+        // withPivot中間テーブルから取得したい情報を指定
+        ->withPivot('id','number_of_people','canceled_date');
+    }
+
 
     // アクセサ（データ取得時に内容を加工する）実装
     // メソッド名():返り値の型指定
