@@ -49,5 +49,15 @@ class Event extends Model
         );
     }
 
+    // イベント日付編集用メソッド
+    // 上記eventDate()でフォーマットした形式「format('Y年m月d日')」では
+    // update時にカラム指定の型と異なる為、専用メソッドで対応する
+    protected function editEventDate(): Attribute
+    {
+        return new Attribute(
+            // datetime型に対応する形でフォーマット
+            get: fn() => Carbon::parse($this->start_date)->format('Y-m-d')
+        );
+    }
 
 }

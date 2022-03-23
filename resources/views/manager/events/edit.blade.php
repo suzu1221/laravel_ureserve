@@ -1,7 +1,7 @@
 <x-app-layout>
   <x-slot name="header">
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-          イベント詳細
+          イベント編集
       </h2>
   </x-slot>
 
@@ -17,50 +17,50 @@
                     </div>
                 @endif
         
-                <form method="get" action="{{ route('events.edit', ['event' => $event->id ]) }}">
+                <form method="POST" action="{{ route('events.update', ['event' => $event->id ]) }}">
+                    @csrf
+                    {{--  @method('PUT')について  --}}
+                    {{--  routeを確認するとevents.updateは「PUT|PATCH」で実装する必要があることがわかる  --}}
+                    {{--  form method="POST"で指定しており差分がある　よって以下指定することで解消される  --}}
+                    @method('put')
+        
                     <div>
                         <x-jet-label for="event_name" value="イベント名" />
-                        {{ $event->name }}
+                        <x-jet-input id="event_name" class="block mt-1 w-full" type="text" name="event_name" value="{{ $event->name }}" required autofocus />
                     </div>
                     <div class="mt-4">
                         <x-jet-label for="information" value="イベント詳細" />
-                        {!! nl2br(e($event->information)) !!}
+                        <x-textarea row="3" id="information" name="information" class="block mt-1 w-full">{{ $event->information }}</x-textarea>
                     </div>
         
                     <div class="md:flex justify-between"> 
                         <div class="mt-4">
                             <x-jet-label for="event_date" value="イベント日付" />
-                            {{ $event->eventDate }}
+                            {{--  「id="event_date"」は「flatpickr.js」で定義したID  --}}
+                            <x-jet-input id="event_date" class="block mt-1 w-full" type="text" name="event_date" value="{{ $eventDate }}" required/>
                         </div>
                         <div class="mt-4">
                             <x-jet-label for="start_time" value="開始時間" />
-                            {{ $event->startTime }}
+                            <x-jet-input id="start_time" class="block mt-1 w-full" type="text" name="start_time" value="{{ $startTime }}" required/>
                         </div>
                         <div class="mt-4">
                             <x-jet-label for="end_time" value="終了時間" />
-                            {{ $event->endTime }}
+                            <x-jet-input id="end_time" class="block mt-1 w-full" type="text" name="end_time" value="{{ $endTime }}" required/>
                         </div>
                     </div>
 
                     <div class="md:flex justify-between items-end">
                         <div class="mt-4">
                             <x-jet-label for="max_people" value="定員数" />
-                            {{ $event->max_people }}
+                            <x-jet-input id="max_people" class="block mt-1 w-full" type="number" name="max_people" value="{{ $event->max_people }}" required/>
                         </div>
                         <div class="flex space-x-4 justify-around">
-                            @if ($event->is_visible)
-                                表示中
-                            @else
-                                非表示
-                            @endif
+                            <input type="radio" name="is_visible" value="1" @if($event->is_visible === 1) checked @endif>表示
+                            <input type="radio" name="is_visible" value="0" @if($event->is_visible === 0) checked @endif>非表示
                         </div>
-                        {{--  今日より以前のイベントであれば編集するボタンを非表示にする  --}}
-                        {{--  ※eventDateと比較するにはCarbonオブジェクトからフォーマット変更する必要があるので対応  --}}
-                        @if($event->eventDate >= \Carbon\Carbon::today()->format('Y年m月d日'))
-                            <x-jet-button class="ml-4">
-                                編集する
-                            </x-jet-button>
-                        @endif
+                        <x-jet-button class="ml-4">
+                            更新する
+                        </x-jet-button>
                     </div>
                 </form>
             </div>

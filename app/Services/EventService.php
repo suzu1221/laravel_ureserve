@@ -19,6 +19,20 @@ class EventService
     return $check;
   }
 
+    // イベント更新用の予約時間重複チェックメソッド
+    // checkEventDuplicationとの違い
+    // イベント更新で「checkEventDuplication」を使用してしまうと
+    // 「同時間帯に予約済みのレコードが存在する（自分自身）」判定になり更新不可となる為
+    // チェック方法を「同時間帯重複レコードが1件のみであれば更新OK」とする
+    public static function countEventDuplication($eventDate,$startTime,$endTime)
+    {
+      return DB::table('events')
+          ->whereDate('start_date', $eventDate) // 日にち
+          ->whereTime('end_date' , '>' ,$startTime)
+          ->whereTime('start_date', '<', $endTime)
+          ->count(); // カウントで存在確認
+    }
+
   // イベントの日付、開始時間、終了時間の連結に使用
   public static function joinDateAndTime($date,$time)
   {

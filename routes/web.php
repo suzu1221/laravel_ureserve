@@ -29,6 +29,10 @@ Route::prefix('manager')
 // AuthServiceProvider.phpで設定した権限チェック
 ->middleware('can:manager-higher')
 ->group(function(){
+    // ルーティングは上から処理される
+    // リソースの下に書くと /past部分がパラメータと勘違いされるのでリソースの上に書く
+    // ※ルートを複数記載する際にはリソースを一番下に持ってきた方が無難？
+    Route::get('events/past', [EventController::class, 'past'])->name('events.past');
     Route::resource('events', EventController::class);
 });
 
