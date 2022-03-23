@@ -17,8 +17,7 @@
                   </div>
                 @endif
 
-                <button onclick="location.href='{{ route('events.create') }}'" class=" flex mb-4 ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">新規登録</button>
-                <div class="w-full mx-auto overflow-auto">
+                <button onclick="location.href='{{ route('events.create') }}'" class=" flex mb-4 ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">新規登録</button>                <div class="w-full mx-auto overflow-auto">
                   <table class="table-auto w-full text-left whitespace-no-wrap">
                     <thead>
                       <tr>
@@ -33,7 +32,7 @@
                     <tbody>
                       @foreach ($events as $event)
                       <tr>
-                        <td class="px-4 py-3">{{ $event->name }}</td>
+                        <td class="text-blue-500 px-4 py-3"><a href="{{ route('events.show',['event' => $event->id]) }}">{{ $event->name }}</a></td>
                         <td class="px-4 py-3">{{ $event->start_date }}</td>
                         <td class="px-4 py-3">{{ $event->end_date }}</td>
                         <td class="px-4 py-3">後ほど</td>

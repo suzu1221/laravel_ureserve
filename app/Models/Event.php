@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Carbon\Carbon;
 
 class Event extends Model
 {
@@ -17,4 +19,35 @@ class Event extends Model
         'end_date',
         'is_visible',
     ];
+
+    // アクセサ（データ取得時に内容を加工する）実装
+    // メソッド名():返り値の型指定
+
+    // イベントの日付取得
+    protected function eventDate(): Attribute
+    {
+        return new Attribute(
+            // parseで日時形式の文字列からインスタンスを作成
+            // $thisで当モデルからstart_dateを取得
+            get: fn() => Carbon::parse($this->start_date)->format('Y年m月d日')
+        );
+    }
+
+    // イベントの開始時間取得
+    protected function startTime(): Attribute
+    {
+        return new Attribute(
+            get: fn() => Carbon::parse($this->start_date)->format('H時i分')
+        );
+    }
+
+    // イベントの終了時間取得
+    protected function endTime(): Attribute
+    {
+        return new Attribute(
+            get: fn() => Carbon::parse($this->end_date)->format('H時i分')
+        );
+    }
+
+
 }
