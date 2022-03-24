@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LivewireTestController;
 use App\Http\Controllers\AlpineTestController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\ReservationController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,9 +22,9 @@ Route::get('/', function () {
     return view('calendar');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+// Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+//     return view('dashboard');
+// })->name('dashboard');
 
 // manager権限のルート設定
 // perfixで以下のように設定するとURLが「http://127.0.0.1:8000/manager/index」のような構成になる
@@ -38,10 +40,11 @@ Route::prefix('manager')
 });
 
 // user権限のルート設定
-Route::middleware('can:user-higher')->group(function(){
-    Route::get('index', function () {
-    dd('user');
-    });
+Route::middleware('can:user-higher')
+->group(function(){
+    Route::get('/dashboard', [ReservationController::class, 'dashboard'])->name('dashboard');
+    Route::get('/{id}', [ReservationController::class, 'detail'])->name('events.detail');
+    Route::post('/{id}', [ReservationController::class, 'reserve'])->name('events.reserve');
 });
 
 Route::controller(LivewireTestController::class)

@@ -18,7 +18,9 @@
                         {{--  定数で設定した30分ごとにイベントの開始時間をチェック　ヒットしたら該当イベントを表示  --}}
                         @if (!is_null($events->firstWhere('start_date',$currentWeek[$i]['checkDay'] . " " . \Constant::EVENT_TIME[$j])))
                             @php
-                                /*イベント名表示*/
+                                /*イベントID*/
+                                $eventId = $events->firstWhere('start_date',$currentWeek[$i]['checkDay'] . " " . \Constant::EVENT_TIME[$j])->id;
+                                /*イベント名*/
                                 $eventName = $events->firstWhere('start_date',$currentWeek[$i]['checkDay'] . " " . \Constant::EVENT_TIME[$j])->name;
                                 
                                 $eventInfo = $events->firstWhere('start_date',$currentWeek[$i]['checkDay'] . " " . \Constant::EVENT_TIME[$j]);
@@ -27,18 +29,21 @@
                                     　例：開始時間10：00 終了時間11：00の場合　60分/30-1で1が格納される */
                                 $eventPeriod = \Carbon\Carbon::parse($eventInfo->start_date)->diffInMinutes($eventInfo->end_date) / 30 - 1; // 差分
                             @endphp
-                            <div class="py-1 px-2 h-8 border border-gray-200 text-xs bg-blue-100">
-                                {{ $eventName }}
-                            </div>
-                            {{--  $eventPeriodが0より多い = イベント予約時間が1時間以上であれば  --}}
-                            @if ($eventPeriod > 0)
-                                @for ($k = 0; $k < $eventPeriod; $k++)
-                                    {{--  背景色を変更する  --}}
-                                    <div class="py-1 px-2 h-8 border border-gray-200 bg-blue-100"></div>
-                                @endfor
-                                {{--  背景色を変更した数だけforインクリメント用変数を進める  --}}
-                                @php $j += $eventPeriod @endphp
-                            @endif
+                            <a href="{{ route('events.detail',['id' => $eventId]) }}">
+                                <div class="py-1 px-2 h-8 border border-gray-200 text-xs bg-blue-100">
+                                    {{ $eventName }}
+                                </div>
+                            
+                                {{--  $eventPeriodが0より多い = イベント予約時間が1時間以上であれば  --}}
+                                @if ($eventPeriod > 0)
+                                    @for ($k = 0; $k < $eventPeriod; $k++)
+                                        {{--  背景色を変更する  --}}
+                                        <div class="py-1 px-2 h-8 border border-gray-200 bg-blue-100"></div>
+                                    @endfor
+                                    {{--  背景色を変更した数だけforインクリメント用変数を進める  --}}
+                                    @php $j += $eventPeriod @endphp
+                                @endif
+                            </a>
                         @else
                             <div class="py-1 px-2 h-8 border border-gray-200"></div>
                         @endif
