@@ -11,6 +11,8 @@ class Calendar extends Component
     public $currentDate; // 本日の日付格納
     public $currentWeek; // 本日から7日間の日付格納
     public $day; // currentWeek格納用
+    public $checkDay; // 判定用日付格納
+    public $dayOfWeek; // 判定用曜日格納
     public $sevenDaysLater; // 本日から7日後の日付格納
     public $events; // 本日から7日間に開催されるイベント格納
 
@@ -32,7 +34,21 @@ class Calendar extends Component
         for ($i=0; $i < 7; $i++) { 
             // addDaysでtoday（今日）からインクリメント分の日数を加算
             $this->day = CarbonImmutable::today()->addDays($i)->format('m月d日');
-            array_push($this->currentWeek,$this->day);
+            $this->checkDay = CarbonImmutable::today()->addDays($i)->format('Y-m-d');
+            // 曜日取得（dayNameはCarbonの機能）
+            $this->dayOfWeek = CarbonImmutable::today()->addDays($i)->dayName;
+
+            // 連想配列で格納（日付,判定用日付,判定用曜日）
+            // 格納例
+            // "day" => "03月24日"
+            // "checkDay" => "2022-03-24"
+            // "dayOfWeek" => "木曜日"
+            array_push($this->currentWeek,[
+                'day' => $this->day,
+                'checkDay' => $this->checkDay,
+                'dayOfWeek' => $this->dayOfWeek,
+                ]
+            );
         }
 
         // dd($this->currentWeek);
@@ -58,9 +74,16 @@ class Calendar extends Component
             // 文字列形式をparsonでCarbonインスタンスに整形
             // addDaysでインクリメント分の日数を加算
             $this->day = CarbonImmutable::parse($this->currentDate)->addDays($i)->format('m月d日');
-            array_push($this->currentWeek,$this->day);
-        }
+            $this->checkDay = CarbonImmutable::parse($this->currentDate)->addDays($i)->format('Y-m-d');
+            $this->dayOfWeek = CarbonImmutable::parse($this->currentDate)->addDays($i)->dayName;
 
+            array_push($this->currentWeek,[
+                'day' => $this->day,
+                'checkDay' => $this->checkDay,
+                'dayOfWeek' => $this->dayOfWeek,
+                ]
+            );
+        }
     }
 
     public function render()

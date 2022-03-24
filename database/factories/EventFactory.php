@@ -26,10 +26,14 @@ class EventFactory extends Factory
 
         // 今月の日付にsetTime(時,分)を設定して開始時間格納
         $startDate = $dammyDate->setTime($availableHour,$minutes[$mKey]);
-        // 終了時間格納時、$startDateを使いまわしてmodefy（〇時間後）とすると
-        // ミュータブル（変動）の関係で$startDateも（〇時間後）の値に変動してしまう
-        // ので、cloneでコピーさせた後に終了時間格納
+        
+        /*         
+        終了時間格納時、$startDateを使いまわしてmodefy（〇時間後）とすると
+        ミュータブル（変動）の関係で$startDateも（〇時間後）の値に変動してしまう
+        ので、cloneでコピーさせた後に終了時間格納 
+        */
         $clone = clone $startDate;
+        
         // .による文字列連結で開始時間から1~3時間後の時間を終了時間とする
         $endDate = $clone->modify('+'.$addHour.'hour');
 
