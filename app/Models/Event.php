@@ -26,7 +26,7 @@ class Event extends Model
     {
         // belongsToMany(リレーション対象のモデルクラス,中間テーブル名)
         return $this->belongsToMany(User::class,'reservations')
-        // withPivot中間テーブルから取得したい情報を指定
+        // withPivot（中間テーブルから取得したい情報を指定）
         ->withPivot('id','number_of_people','canceled_date');
     }
 

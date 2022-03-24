@@ -2875,8 +2875,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var flatpickr__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! flatpickr */ "./node_modules/flatpickr/dist/esm/index.js");
 /* harmony import */ var flatpickr_dist_l10n_ja_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! flatpickr/dist/l10n/ja.js */ "./node_modules/flatpickr/dist/l10n/ja.js");
 /* harmony import */ var flatpickr_dist_l10n_ja_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(flatpickr_dist_l10n_ja_js__WEBPACK_IMPORTED_MODULE_1__);
+// flatpickrインポート文
+ // 日本語指定
 
- // 第1引数でIDを命名
+ // 基本構文
+// flatpickr(第1引数にID命名,{第2引数に様々なオプション指定});
+// 汎用的なオプション指定は定数で持たせるのもあり（定数「setting」が例）
+// 使用例は「create.blade.php」等参照
+// 第1引数でIDを命名
 
 (0,flatpickr__WEBPACK_IMPORTED_MODULE_0__["default"])("#event_date", {
   // 日本指定
@@ -2885,7 +2891,16 @@ __webpack_require__.r(__webpack_exports__);
   minDate: "today",
   // 30日後まで指定可
   maxDate: new Date().fp_incr(30)
-}); // 開始時間、終了時間用のオプション設定
+}); // 第1引数でIDを命名
+
+(0,flatpickr__WEBPACK_IMPORTED_MODULE_0__["default"])("#calendar", {
+  // 日本指定
+  "locale": flatpickr_dist_l10n_ja_js__WEBPACK_IMPORTED_MODULE_1__.Japanese,
+  // 今日以前の日付は指定不可
+  // minDate: "today",
+  // 30日後まで指定可
+  maxDate: new Date().fp_incr(30)
+}); // 開始時間、終了時間のオプション設定
 
 var setting = {
   "locale": flatpickr_dist_l10n_ja_js__WEBPACK_IMPORTED_MODULE_1__.Japanese,
@@ -2894,8 +2909,10 @@ var setting = {
   dateFormat: "H:i",
   time_24hr: true,
   minTime: "10:00",
-  maxTime: "20:00"
-};
+  maxTime: "20:00",
+  minuteIncrement: 30
+}; // 開始時間、終了時間のIDと上記オプション内容を設定
+
 (0,flatpickr__WEBPACK_IMPORTED_MODULE_0__["default"])("#start_time", setting);
 (0,flatpickr__WEBPACK_IMPORTED_MODULE_0__["default"])("#end_time", setting);
 })();
