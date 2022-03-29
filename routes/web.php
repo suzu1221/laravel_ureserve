@@ -47,9 +47,12 @@ Route::middleware('can:user-higher')
     Route::get('/mypage', [MyPageController::class, 'index'])->name('mypage.index');
     Route::get('/mypage/{id}/', [MyPageController::class, 'show'])->name('mypage.show');
     Route::post('/mypage/{id}/', [MyPageController::class, 'cancel'])->name('mypage.cancel');
-    Route::get('/{id}', [ReservationController::class, 'detail'])->name('events.detail');
+    // Route::get('/{id}', [ReservationController::class, 'detail'])->name('events.detail');
     Route::post('/{id}', [ReservationController::class, 'reserve'])->name('events.reserve');
 });
+
+// 未ログイン時でイベント詳細にアクセスした際にはログインページへ遷移させる
+Route::middleware('auth')->get('/{id}', [ReservationController::class, 'detail'])->name('events.detail');
 
 Route::controller(LivewireTestController::class)
 // prefixの後にnameで命名すると、各ルートの命名記載を省略できる
