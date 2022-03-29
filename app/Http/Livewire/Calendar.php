@@ -31,6 +31,8 @@ class Calendar extends Component
             $this->sevenDaysLater->format('Y-m-d')
         );
 
+        // dd($this->events);
+
         for ($i=0; $i < 7; $i++) { 
             // addDaysでtoday（今日）からインクリメント分の日数を加算
             $this->day = CarbonImmutable::today()->addDays($i)->format('m月d日');
