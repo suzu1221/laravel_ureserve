@@ -66,7 +66,44 @@ class EventService
     ->get();
     
   }
+  /**
+   * イベントが満員かどうかチェックする
+   *
+   * @param  $event　イベントのコレクション
+   * @return void
+   */
+  public static function getFullMemberCheck($events)
+  {
+    foreach ($events as $event) {
+      // dd($event->id);
 
+      // 中間テーブル（reservations）からイベントIDと予約人数を取得
+      $reservedPeople = DB::table('reservations')
+      ->select('event_id', DB::raw('sum(number_of_people) as number_of_people'))
+      ->whereNull('canceled_date')
+      ->groupBy('event_id')
+      // 選択したイベントである事を条件
+      ->having('event_id',$event->id)
+      ->first();
+
+      // イベントが予約済みであれば計算
+      if(!is_null($reservedPeople))
+      {
+          // 予約上限の人数から予約済みの人数を引いて予約可能な人数を取得
+          $reservablePeople = $event->max_people - $reservedPeople->number_of_people;
+      }
+      // 予約されてないイベントであれば最大人数がそのまま予約可能人数となる
+      else
+      {
+          $reservablePeople = $event->max_people;
+      }
+
+      // dd($reservablePeople);
+
+      return $reservablePeople;
+    }
+// 
+  }
 
 
 

@@ -16,6 +16,8 @@ class Calendar extends Component
     public $sevenDaysLater; // 本日から7日後の日付格納
     public $events; // 本日から7日間に開催されるイベント格納
 
+    public $fullMemberCheck; // イベント満員確認用
+
     // mount()…コンストラクタ的なメソッド
     // 本日から7日分の計算を実施して配列に格納
     public function mount()
@@ -33,6 +35,13 @@ class Calendar extends Component
 
         // dd($this->events);
 
+        // イベントが満員かどうかチェック
+        if($this->events->isNotEmpty()){
+            $this->fullMemberCheck = EventService::getFullMemberCheck($this->events);
+        }
+
+        // dd($this->fullMemberCheck);
+        
         for ($i=0; $i < 7; $i++) { 
             // addDaysでtoday（今日）からインクリメント分の日数を加算
             $this->day = CarbonImmutable::today()->addDays($i)->format('m月d日');
@@ -70,6 +79,11 @@ class Calendar extends Component
             $this->currentDate,
             $this->sevenDaysLater->format('Y-m-d')
         );
+
+        // イベントが満員かどうかチェック
+        if($this->events->isNotEmpty()){
+            $this->fullMemberCheck = EventService::getFullMemberCheck($this->events);
+        }
 
 
         for ($i=0; $i < 7; $i++) { 

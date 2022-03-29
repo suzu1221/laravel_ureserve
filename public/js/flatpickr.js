@@ -2897,7 +2897,7 @@ __webpack_require__.r(__webpack_exports__);
   // 日本指定
   "locale": flatpickr_dist_l10n_ja_js__WEBPACK_IMPORTED_MODULE_1__.Japanese,
   // 今日以前の日付は指定不可
-  // minDate: "today",
+  minDate: "today",
   // 30日後まで指定可
   maxDate: new Date().fp_incr(30)
 }); // 開始時間、終了時間のオプション設定

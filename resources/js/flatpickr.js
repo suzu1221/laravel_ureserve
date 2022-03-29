@@ -23,7 +23,7 @@ flatpickr("#calendar", {
   // 日本指定
   "locale": Japanese,
   // 今日以前の日付は指定不可
-  // minDate: "today",
+  minDate: "today",
   // 30日後まで指定可
   maxDate: new Date().fp_incr(30)
 });

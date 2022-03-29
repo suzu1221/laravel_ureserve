@@ -30,15 +30,26 @@
                                 $eventPeriod = \Carbon\Carbon::parse($eventInfo->start_date)->diffInMinutes($eventInfo->end_date) / 30 - 1; // 差分
                             @endphp
                             <a href="{{ route('events.detail',['id' => $eventId]) }}">
-                                <div class="py-1 px-2 h-8 border border-gray-200 text-xs bg-blue-100">
-                                    {{ $eventName }}
-                                </div>
+                                {{--  予約が満員でなければ背景色青  --}}
+                                @if ($fullMemberCheck > 0)
+                                    <div class="py-1 px-2 h-8 border border-gray-200 text-xs bg-blue-100">
+                                        {{ $eventName }}
+                                    </div>
+                                @else
+                                    <div class="py-1 px-2 h-8 border border-gray-200 text-xs bg-red-100">
+                                        {{ $eventName }}
+                                    </div>
+                                @endif
                             
                                 {{--  $eventPeriodが0より多い = イベント予約時間が1時間以上であれば  --}}
                                 @if ($eventPeriod > 0)
                                     @for ($k = 0; $k < $eventPeriod; $k++)
                                         {{--  背景色を変更する  --}}
-                                        <div class="py-1 px-2 h-8 border border-gray-200 bg-blue-100"></div>
+                                        @if ($fullMemberCheck > 0)
+                                            <div class="py-1 px-2 h-8 border border-gray-200 bg-blue-100"></div>
+                                        @else
+                                            <div class="py-1 px-2 h-8 border border-gray-200 bg-red-100"></div>
+                                        @endif
                                     @endfor
                                     {{--  背景色を変更した数だけforインクリメント用変数を進める  --}}
                                     @php $j += $eventPeriod @endphp
