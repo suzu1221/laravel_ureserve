@@ -43,8 +43,16 @@ class ReservationController extends Controller
             $reservablePeople = $event->max_people;
         }
 
+        // ログインしているユーザが既に同一イベントを予約しているかチェック
+        // 予約済みであれば重複予約はNGになる　キャンセル済みであれば再度予約可
+        $isReserved = Reservation::where('user_id', '=', Auth::id())
+        ->where('event_id', '=', $id)
+        ->where('canceled_date', '=', null)
+        ->latest()
+        ->first();
+
         return view('event-detail',
-        compact('event','reservablePeople'));
+        compact('event','reservablePeople','isReserved'));
     }
 
     /* イベント予約メソッド */

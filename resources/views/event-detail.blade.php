@@ -51,17 +51,31 @@
                             {{ $event->max_people }}
                         </div>
                         <div class="mt-4">
-                          <x-jet-label for="reserved_people" value="予約人数" />
-                          <select name="reserved_people">
-                            {{--  予約可能人数分ループしてオプション設定  --}}
-                            @for ($i = 1; $i <= $reservablePeople; $i++)
-                              <option value="{{ $i }}">{{ $i }}</option>
-                            @endfor
-                          </select>
+                          {{--  予約が満員なら警告表示  --}}
+                          @if ($reservablePeople <= 0)
+                            <span class="text-red-500">このイベントは満員です</span>
+                          @else
+                            <x-jet-label for="reserved_people" value="予約人数" />
+                            <select name="reserved_people">
+                              {{--  予約可能人数分ループしてオプション設定  --}}
+                              @for ($i = 1; $i <= $reservablePeople; $i++)
+                                <option value="{{ $i }}">{{ $i }}</option>
+                              @endfor
+                            </select>
+                          @endif
                         </div>
-                        {{--  POST通信でIDを渡すのでhiddenを使用し裏で格納  --}}
-                        <input type="hidden" name="id" value="{{ $event->id }}">
-                        <x-jet-button class="ml-4">予約する</x-jet-button>
+                        {{--  重複予約でない　かつ　前回予約がキャンセル済みであれば予約ボタン表示  --}}
+                        @if ($isReserved === null)
+                          {{--  POST通信でIDを渡すのでhiddenを使用し裏で格納  --}}
+                          <input type="hidden" name="id" value="{{ $event->id }}">
+                          {{--  予約が満員でなければ予約するボタン表示  --}}
+                          @if ($reservablePeople > 0)
+                            <x-jet-button class="ml-4">予約する</x-jet-button>
+                          @endif
+                        {{--  既に予約済みのイベントだった場合  --}}
+                        @else
+                        <span class="text-xs">このイベントは既に予約済みです。</span>
+                        @endif
                     </div>
                 </form>
             </div>
