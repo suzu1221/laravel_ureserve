@@ -28,33 +28,42 @@
                                     　開始時間と終了時間の差分計算（diffInMinutesで分単位の差分を確認、30で割り、既に背景色を変更している項目分-1する）  
                                     　例：開始時間10：00 終了時間11：00の場合　60分/30-1で1が格納される */
                                 $eventPeriod = \Carbon\Carbon::parse($eventInfo->start_date)->diffInMinutes($eventInfo->end_date) / 30 - 1; // 差分
+
+                                /* イベント満員日時確認用 */
+                                $eventFullCheckDay = \Carbon\Carbon::parse($this->currentWeek[$i]['checkDay'] . " " . \Constant::EVENT_TIME[$j]);
+                                
                             @endphp
                             <a href="{{ route('events.detail',['id' => $eventId]) }}">
-                                {{--  予約が満員でなければ背景色青  --}}
-                                @if ($fullMemberCheck > 0)
-                                    <div class="py-1 px-2 h-8 border border-gray-200 text-xs bg-blue-100">
-                                        {{ $eventName }}
-                                    </div>
-                                @else
-                                    <div class="py-1 px-2 h-8 border border-gray-200 text-xs bg-red-100">
-                                        {{ $eventName }}
-                                    </div>
-                                @endif
-                            
-                                {{--  $eventPeriodが0より多い = イベント予約時間が1時間以上であれば  --}}
-                                @if ($eventPeriod > 0)
-                                    @for ($k = 0; $k < $eventPeriod; $k++)
-                                        {{--  背景色を変更する  --}}
-                                        @if ($fullMemberCheck > 0)
-                                            <div class="py-1 px-2 h-8 border border-gray-200 bg-blue-100"></div>
-                                        @else
-                                            <div class="py-1 px-2 h-8 border border-gray-200 bg-red-100"></div>
-                                        @endif
-                                    @endfor
-                                    {{--  背景色を変更した数だけforインクリメント用変数を進める  --}}
-                                    @php $j += $eventPeriod @endphp
-                                @endif
-                            </a>
+                                @foreach ($eventFullTimes as $eventFullTime)
+                                    {{--  予約人数が満員であれば背景色赤  --}}
+                                    {{--  @php dd($eventFullTimes); @endphp  --}}
+                                    @if ($eventFullTime['eventFullTime'] == $eventFullCheckDay)
+                                        <div class="py-1 px-2 h-8 border border-gray-200 text-xs bg-red-100">
+                                            {{ $eventName }}
+                                        </div>
+                                    @else
+                                        <div class="py-1 px-2 h-8 border border-gray-200 text-xs bg-blue-100">
+                                            {{ $eventName }}
+                                        </div>
+                                    @endif
+                                
+                                    {{--  $eventPeriodが0より多い = イベント予約時間が1時間以上であれば  --}}
+                                    @if ($eventPeriod > 0)
+                                        @for ($k = 0; $k < $eventPeriod; $k++)
+                                            {{--  背景色を変更する  --}}
+                                            {{--  予約人数が満員であれば背景色赤  --}}
+                                            @if ($eventFullTime['eventFullTime'] == $eventFullCheckDay)
+                                                <div class="py-1 px-2 h-8 border border-gray-200 bg-red-100"></div>
+                                            @else
+                                                <div class="py-1 px-2 h-8 border border-gray-200 bg-blue-100"></div>
+                                            @endif
+                                        @endfor
+                                        {{--  背景色を変更した数だけforインクリメント用変数を進める  --}}
+                                        @php $j += $eventPeriod @endphp
+                                    @endif
+                                    {{--  @break  --}}
+                                @endforeach
+                            </a>                        
                         @else
                             <div class="py-1 px-2 h-8 border border-gray-200"></div>
                         @endif

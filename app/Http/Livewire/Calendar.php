@@ -16,7 +16,7 @@ class Calendar extends Component
     public $sevenDaysLater; // 本日から7日後の日付格納
     public $events; // 本日から7日間に開催されるイベント格納
 
-    public $fullMemberCheck; // イベント満員確認用
+    public $eventFullTimes; //満員イベント実施時間格納用配列
 
     // mount()…コンストラクタ的なメソッド
     // 本日から7日分の計算を実施して配列に格納
@@ -26,6 +26,8 @@ class Calendar extends Component
         $this->sevenDaysLater = $this->currentDate->addDays(7);
         $this->currentWeek = [];
 
+        $this->fullMemberEvents = [];
+
         // 本日から7日後までのイベント取得
         // ※値を渡す際にはformatで整形
         $this->events = EventService::getWeekEvents(
@@ -34,13 +36,6 @@ class Calendar extends Component
         );
 
         // dd($this->events);
-
-        // イベントが満員かどうかチェック
-        if($this->events->isNotEmpty()){
-            $this->fullMemberCheck = EventService::getFullMemberCheck($this->events);
-        }
-
-        // dd($this->fullMemberCheck);
         
         for ($i=0; $i < 7; $i++) { 
             // addDaysでtoday（今日）からインクリメント分の日数を加算
@@ -60,9 +55,30 @@ class Calendar extends Component
                 'dayOfWeek' => $this->dayOfWeek,
                 ]
             );
-        }
 
-        // dd($this->currentWeek);
+            // dd($this->eventFullTimes);
+
+            // test start
+            // for ($j = 0; $j < 21; $j++) {
+            //     $checkDay = \Carbon\Carbon::parse($this->currentWeek[$i]['checkDay'] . " " . \Constant::EVENT_TIME[$j]);
+
+            //     foreach ($this->eventFullTimes as $eventFullTime) {
+            //         if ($eventFullTime['eventFullTime'] == $checkDay) {
+            //             echo "<pre>";
+            //             var_dump('count');
+            //             echo "<pre>";
+            //         } else {
+            //             // dd('false');
+            //         }
+            //     }
+            // }
+            // test end
+        }
+        
+        // イベント満員チェック
+        $this->eventFullTimes = EventService::getFullMemberCheck($this->events,CarbonImmutable::today()->format('Y-m-d'));
+        // dd('test',$this->eventFullTimes);
+
     }
 
     // flatpickrで選択した日付から7日後の日付取得
@@ -73,6 +89,8 @@ class Calendar extends Component
         $this->sevenDaysLater = CarbonImmutable::parse($this->currentDate)->addDays(7);
         $this->currentWeek = [];
 
+        $this->fullMemberEvents = [];
+
         // 選択した日付から7日後までのイベント取得
         // ※値を渡す際にはformatで整形
         $this->events = EventService::getWeekEvents(
@@ -80,11 +98,7 @@ class Calendar extends Component
             $this->sevenDaysLater->format('Y-m-d')
         );
 
-        // イベントが満員かどうかチェック
-        if($this->events->isNotEmpty()){
-            $this->fullMemberCheck = EventService::getFullMemberCheck($this->events);
-        }
-
+        // dd($eventFullTimes);
 
         for ($i=0; $i < 7; $i++) { 
             // 文字列形式をparsonでCarbonインスタンスに整形
@@ -100,6 +114,10 @@ class Calendar extends Component
                 ]
             );
         }
+
+        // イベントが満員かどうかチェック
+        $this->eventFullTimes = EventService::getFullMemberCheck($this->events,CarbonImmutable::parse($this->currentDate));
+        
     }
 
     public function render()

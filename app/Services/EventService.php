@@ -70,41 +70,75 @@ class EventService
    * イベントが満員かどうかチェックする
    *
    * @param  $event　イベントのコレクション
-   * @return void
+   * @return $reservablePeople 0が返れば満員、1以上なら予約に空きあり
    */
-  public static function getFullMemberCheck($events)
-  {
-    foreach ($events as $event) {
-      // dd($event->id);
+  // public static function getFullMemberCheck($event)
+  // {
+  //       // 中間テーブル（reservations）からイベントIDと予約人数を取得
+  //       $reservedPeople = DB::table('reservations')
+  //     ->select('event_id', DB::raw('sum(number_of_people) as number_of_people'))
+  //     ->whereNull('canceled_date')
+  //     ->groupBy('event_id')
+  //     // 選択したイベントである事を条件
+  //     ->having('event_id', $event->id)
+  //     ->first();
 
-      // 中間テーブル（reservations）からイベントIDと予約人数を取得
-      $reservedPeople = DB::table('reservations')
-      ->select('event_id', DB::raw('sum(number_of_people) as number_of_people'))
-      ->whereNull('canceled_date')
-      ->groupBy('event_id')
-      // 選択したイベントである事を条件
-      ->having('event_id',$event->id)
-      ->first();
+  //       // イベントが予約済みであれば計算
+  //       if (!is_null($reservedPeople)) {
+  //           // 予約上限の人数から予約済みの人数を引いて予約可能な人数を取得
+  //           $reservablePeople = $event->max_people - $reservedPeople->number_of_people;
+  //       }
+  //       // 予約されてないイベントであれば最大人数がそのまま予約可能人数となる
+  //       else {
+  //           $reservablePeople = $event->max_people;
+  //       }
 
-      // イベントが予約済みであれば計算
-      if(!is_null($reservedPeople))
-      {
+  //       // dd($reservablePeople);
+
+  //       return $reservablePeople;
+  // }
+    public static function getFullMemberCheck($events,$checkDay)
+    {
+      // 予約人数満員イベントの時間返却用配列
+      $eventFullTime = [];
+
+      // 選択した日付から7日の間に開催されるイベント分ループ
+      foreach ($events as $event) {
+        // チェック対象となる日付をCarbon形式にパース
+        $checkDayCopy = \Carbon\Carbon::parse($checkDay);
+
+        // イベントが予約済みであれば予約可能人数を計算
+        if (!is_null($event->number_of_people)) {
           // 予約上限の人数から予約済みの人数を引いて予約可能な人数を取得
-          $reservablePeople = $event->max_people - $reservedPeople->number_of_people;
-      }
-      // 予約されてないイベントであれば最大人数がそのまま予約可能人数となる
-      else
-      {
+          $reservablePeople = $event->max_people - $event->number_of_people;
+        }
+        // 予約されてないイベントであれば最大人数がそのまま予約可能人数となる
+        else {
           $reservablePeople = $event->max_people;
+        }
+
+        // $reservablePeopleが0なら満員=その時間を配列に格納する
+        if ($reservablePeople == 0) {
+          // for7回回して7日分チェック
+          for ($i = 0; $i < 7; $i++) {
+            // 10:00~20:00まで30分区切りで確認
+            for ($j = 0; $j < 21; $j++) {
+              // 定数で設定した時間を「:」区切りで時、分、秒に分割
+              $ex_EventTime = explode(":",\Constant::EVENT_TIME[$j]);
+              
+              // 予約人数が満員になっているイベントの開始時間（Carbon形式にパース）を30分間隔で一致しているか判断
+              if (\Carbon\Carbon::parse($event->start_date) == $checkDayCopy->setTime($ex_EventTime[0],$ex_EventTime[1],$ex_EventTime[2])) {
+                // 満員となっているイベントの開始時間を格納
+                array_push($eventFullTime, [
+                  'eventFullTime'=> \Carbon\CarbonImmutable::parse($event->start_date),
+                ]);
+              }
+            }
+            // チェック日付を1日加算して次のループへ
+            $checkDayCopy = \Carbon\CarbonImmutable::parse($checkDayCopy)->addDays(1);
+          }
       }
-
-      // dd($reservablePeople);
-
-      return $reservablePeople;
     }
-// 
-  }
-
-
-
+    return $eventFullTime;
+   }
 }
